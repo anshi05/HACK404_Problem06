@@ -1,7 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+@font-face {
+  font-family: 'GamingFont';
+  src: url('/fonts/ArcadeClassic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.audiowide-regular {
+  font-family: "Audiowide", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
 
 :root {
   /* Vibrant premium cyberpunk theme with blues, magentas, and cyans */

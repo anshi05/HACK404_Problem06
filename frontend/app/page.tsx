@@ -7,13 +7,17 @@ import { Footer } from "@/components/footer"
 import { HeroSection } from "@/components/hero-section"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
+import { useLoading } from "@/components/loading-provider"
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [scrollY, setScrollY] = useState(0)
+  const { startLoading, stopLoading } = useLoading()
 
   useEffect(() => {
+    // stopLoading() // Removed: Loader now controls its own visibility duration
+
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
@@ -38,11 +42,14 @@ export default function Home() {
     }
 
     try {
+      startLoading(["> CONNECTING TO AUDITVAULT NETWORK...", "> AUTHENTICATING WALLET...", "> SECURE CONNECTION ESTABLISHED."])
       console.log("[v0] Wallet connection initiated")
       setWalletConnected(true)
       console.log("[v0] Wallet connected successfully")
+      // stopLoading() - This will be handled by the next page's useEffect
     } catch (error) {
       console.error("[v0] Wallet connection failed:", error)
+      stopLoading() // Stop loading if connection fails
     }
   }
 

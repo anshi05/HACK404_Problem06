@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth, type UserRole } from "@/lib/auth"
 import { motion } from "framer-motion"
 import Link from "next/link"
+import { useLoading } from "@/components/loading-provider"
 
 export default function AuthPage() {
   const [step, setStep] = useState<"method" | "login" | "signup">("method")
@@ -13,9 +14,9 @@ export default function AuthPage() {
   const [password, setPassword] = useState("")
   const [selectedRole, setSelectedRole] = useState<UserRole>("inspector")
   const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
   const { login, connectWallet } = useAuth()
   const router = useRouter()
+  const { startLoading, stopLoading, isLoading } = useLoading()
 
   const roles: { role: UserRole; label: string; desc: string }[] = [
     { role: "inspector", label: "Inspector", desc: "Submit site inspections" },
@@ -25,7 +26,7 @@ export default function AuthPage() {
   ]
 
   const handleLogin = async () => {
-    setIsLoading(true)
+    startLoading(["> AUTHENTICATING USER...", "> VERIFYING CREDENTIALS...", "> ACCESSING DASHBOARD..."])
     setError("")
     try {
       await login(email, password, selectedRole)
@@ -33,10 +34,11 @@ export default function AuthPage() {
     } catch (err) {
       setError("Invalid credentials. Try inspector@complichain.com / inspector123")
     }
-    setIsLoading(false)
+    stopLoading()
   }
 
   const handleWalletConnect = async () => {
+    startLoading(["> CONNECTING TO WEB3 WALLET...", "> REQUESTING ACCOUNT ACCESS...", "> WALLET CONNECTED."])
     try {
       // In real implementation, use Web3Modal or wagmi
       const mockAddress = "0x" + Math.random().toString(16).substr(2, 40)
@@ -45,6 +47,7 @@ export default function AuthPage() {
     } catch (err) {
       setError("Wallet connection failed")
     }
+    stopLoading()
   }
 
   return (

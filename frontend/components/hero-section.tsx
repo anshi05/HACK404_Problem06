@@ -6,7 +6,11 @@ import Link from "next/link"
 
 export function HeroSection() {
   const [displayedText, setDisplayedText] = useState("")
-  const terminalText = ["> INIT SEQUENCE v2.4", "> LOADING MODULES", "> ACCESS GRANTED", "> CONTINUE..."]
+  const terminalText = [
+    "> VERIFYING_INTEGRITY_PROTOCOLS...",
+    "> BLOCKCHAIN_SYNC_COMPLETE ",
+    "> ACCESS_GRANTED",
+  ]
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
@@ -47,7 +51,7 @@ export function HeroSection() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="relative w-full min-h-screen bg-background flex flex-col items-center justify-center overflow-hidden pt-20"
+      className="relative w-full min-h-screen bg-background flex flex-col items-center justify-center overflow-hidden "
     >
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-accent/10" />
@@ -81,7 +85,7 @@ export function HeroSection() {
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="absolute left-4 md:left-12 top-20 font-mono text-sm text-primary whitespace-pre-wrap break-words"
+        className="absolute left-4 md:left-12 top-0 font-mono text-sm text-primary whitespace-pre-wrap break-words"
       >
         {displayedText}
         <motion.span
@@ -91,7 +95,7 @@ export function HeroSection() {
         />
       </motion.div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 py-20 flex flex-col items-center justify-center">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 flex flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center space-y-8">
           {/* Logo */}
           <motion.div
@@ -114,7 +118,7 @@ export function HeroSection() {
               <div className="text-5xl md:text-7xl font-black tracking-tight">
                 <span className="text-foreground">Audit</span>
                 <motion.span
-                  className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent inline"
+                  className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent inline audiowide-regular"
                   animate={{
                     backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                   }}
@@ -124,6 +128,13 @@ export function HeroSection() {
                   Vault
                 </motion.span>
               </div>
+              {/* Underline */}
+              <motion.div
+                initial={{ opacity: 0, scaleX: 0 }}
+                animate={{ opacity: 1, scaleX: 1 }}
+                transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+                className="w-24 h-[0.2em] bg-gradient-to-r from-primary via-accent to-primary rounded-full mx-auto"
+              />
 
               {/* Tagline */}
               <motion.p

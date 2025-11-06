@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { NotificationToast } from "@/components/notification-toast"
+import { LoadingProvider } from "@/components/loading-provider"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased relative`}>
-        <div className="relative z-10">{children}</div>
+        <LoadingProvider>
+          <div className="relative z-10">{children}</div>
+        </LoadingProvider>
         <NotificationToast />
       </body>
     </html>

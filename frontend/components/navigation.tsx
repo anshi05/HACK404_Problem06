@@ -4,6 +4,8 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { useAuth } from "@/lib/auth"
 import { useNotifications } from "@/lib/notifications"
+import { useRouter } from "next/navigation"
+import { useLoading } from "@/components/loading-provider"
 
 interface NavigationProps {
   walletConnected: boolean
@@ -14,6 +16,8 @@ export function Navigation({ walletConnected, onWalletConnect }: NavigationProps
   const { user, isLoggedIn, logout } = useAuth()
   const { getUnreadCount } = useNotifications()
   const unreadCount = getUnreadCount()
+  const router = useRouter()
+  const { startLoading } = useLoading()
 
   const dashboardLink = isLoggedIn
     ? user?.role === "manager"
@@ -25,7 +29,7 @@ export function Navigation({ walletConnected, onWalletConnect }: NavigationProps
           : "/inspect"
     : "/auth"
 
-  const dashboardLabel = user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1) || "Dashboard"
+  const dashboardLabel = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : "Dashboard"
 
   return (
     <motion.nav
@@ -42,19 +46,25 @@ export function Navigation({ walletConnected, onWalletConnect }: NavigationProps
 
         {/* Links */}
         <div className="hidden md:flex items-center gap-8">
-          <Link href="/" className="text-sm text-foreground/70 hover:text-accent transition-colors font-mono">
+          <Link
+            href="/"
+            onClick={() => startLoading(["> LOADING HOME PAGE...", "> ANALYZING SYSTEM STATUS..."])}
+            className="text-sm text-foreground/70 hover:text-accent transition-colors font-mono"
+          >
             Home
           </Link>
           {isLoggedIn && (
             <>
               <Link
                 href="/inspect"
+                onClick={() => startLoading(["> ACCESSING INSPECTION MODULE...", "> RETRIEVING PENDING TASKS..."])}
                 className="text-sm text-foreground/70 hover:text-accent transition-colors font-mono"
               >
                 Inspect
               </Link>
               <Link
                 href={dashboardLink}
+                onClick={() => startLoading(["> AUTHENTICATING USER ROLE...", "> LOADING DASHBOARD DATA..."])}
                 className="text-sm text-foreground/70 hover:text-accent transition-colors font-mono"
               >
                 {dashboardLabel}
