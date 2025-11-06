@@ -23,44 +23,44 @@ export interface AuthStore {
 
 // Mock users for demonstration
 const MOCK_USERS: Record<string, { password: string; user: User }> = {
-  "inspector@complichain.com": {
+  "inspector@auditvault.com": {
     password: "inspector123",
     user: {
       id: "1",
-      email: "inspector@complichain.com",
+      email: "inspector@auditvault.com",
       walletAddress: "0x1234...5678",
       role: "inspector",
       name: "John Inspector",
       organization: "SafeCheck Inc",
     },
   },
-  "manager@complichain.com": {
+  "manager@auditvault.com": {
     password: "manager123",
     user: {
       id: "2",
-      email: "manager@complichain.com",
+      email: "manager@auditvault.com",
       walletAddress: "0x9876...5432",
       role: "manager",
       name: "Sarah Manager",
       organization: "SafeCheck Inc",
     },
   },
-  "auditor@complichain.com": {
+  "auditor@auditvault.com": {
     password: "auditor123",
     user: {
       id: "3",
-      email: "auditor@complichain.com",
+      email: "auditor@auditvault.com",
       walletAddress: "0xabcd...ef01",
       role: "auditor",
       name: "Mike Auditor",
       organization: "Compliance Audits Ltd",
     },
   },
-  "regulator@complichain.com": {
+  "regulator@auditvault.com": {
     password: "regulator123",
     user: {
       id: "4",
-      email: "regulator@complichain.com",
+      email: "regulator@auditvault.com",
       walletAddress: "0xfedc...ba98",
       role: "regulator",
       name: "Alice Regulator",

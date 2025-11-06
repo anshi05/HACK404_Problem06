@@ -32,7 +32,7 @@ export default function AuthPage() {
       await login(email, password, selectedRole)
       router.push("/")
     } catch (err) {
-      setError("Invalid credentials. Try inspector@auditvault.com / inspector123")
+      setError(`Invalid credentials. Try ${selectedRole}@auditvault.com / ${selectedRole}123`)
     }
     stopLoading()
   }
