@@ -4,7 +4,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground text-center md:text-left">
-            © 2025 CompliChain | Powered by Polygon + IPFS
+            © 2025 AuditVault | Powered by Polygon + IPFS
           </p>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">

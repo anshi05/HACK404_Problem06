@@ -9,9 +9,9 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "CompliChain - Decentralized Compliance Platform",
+  title: "AuditVault - Decentralized Compliance Platform",
   description: "Immutable Safety. Transparent Compliance.",
-  generator: "v0.app",
+  icons: { icon: "/logo2.png" },
 }
 
 export default function RootLayout({

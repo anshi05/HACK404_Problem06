@@ -32,7 +32,7 @@ export default function AuthPage() {
       await login(email, password, selectedRole)
       router.push("/")
     } catch (err) {
-      setError("Invalid credentials. Try inspector@complichain.com / inspector123")
+      setError("Invalid credentials. Try inspector@auditvault.com / inspector123")
     }
     stopLoading()
   }
@@ -74,7 +74,7 @@ export default function AuthPage() {
           <div className="text-center space-y-2">
             <Link href="/" className="inline-block mb-4 hover:opacity-80 transition">
               <div className="text-2xl font-bold text-foreground">
-                COMPLI<span className="text-accent">CHAIN</span>
+                AUDIT<span className="text-accent">VAULT</span>
               </div>
             </Link>
             <h1 className="text-2xl font-bold text-foreground">Access Portal</h1>
@@ -132,7 +132,7 @@ export default function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={`${selectedRole}@complichain.com`}
+                  placeholder={`${selectedRole}@auditvault.com`}
                   className="w-full px-4 py-2 rounded border border-border bg-input text-foreground focus:border-primary/50 focus:outline-none transition-colors"
                 />
               </div>
@@ -155,7 +155,7 @@ export default function AuthPage() {
               )}
 
               <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded border border-border">
-                Demo: {selectedRole}@complichain.com / {selectedRole}123
+                Demo: {selectedRole}@auditvault.com / {selectedRole}123
               </div>
 
               <Button

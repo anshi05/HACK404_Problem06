@@ -108,7 +108,7 @@ export function HeroSection() {
           </motion.div>
 
           {/* Main Heading */}
-          <div className="text-center space-y-6">
+          <div className="text-center space-y-3">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -152,7 +152,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="flex flex-wrap justify-center gap-4 text-xs md:text-sm font-mono text-foreground/60"
+              className="flex flex-wrap justify-center gap-1 text-[.8em] md:text-[.8em] font-mono text-foreground/60"
             >
               <span>COMPLIANCE TRACKING</span>
               <span className="text-accent">|</span>
@@ -189,18 +189,6 @@ export function HeroSection() {
               </motion.button>
             </Link>
           </motion.div>
-
-          {/* Connect Wallet Button */}
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 border-2 border-foreground/30 text-foreground/70 hover:text-foreground hover:border-accent font-mono text-sm rounded-lg transition-all"
-          >
-            CONNECT WALLET
-          </motion.button>
 
           {/* Scroll indicator */}
           <motion.div
