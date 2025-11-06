@@ -37,13 +37,13 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
       </div>
 
       {/* Warnings */}
-      {data.warnings.length > 0 && (
+      {data?.warnings?.length > 0 && (
         <div className="console-card border-yellow-500/30 bg-yellow-500/5">
           <h3 className="text-lg font-semibold text-yellow-500 mb-4 flex items-center gap-2">
             <span>⚠</span> Warnings
           </h3>
           <ul className="space-y-2">
-            {data.warnings.map((warning: string, idx: number) => (
+            {data?.warnings?.map((warning: string, idx: number) => (
               <li key={idx} className="text-sm text-foreground/80 flex gap-2">
                 <span className="text-muted-foreground">•</span>
                 {warning}
@@ -54,7 +54,7 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
       )}
 
       {/* Critical Issues */}
-      {data.criticalIssues.length > 0 && (
+      {data?.criticalIssues?.length > 0 && (
         <div className="console-card border-destructive/30 bg-destructive/5">
           <h3 className="text-lg font-semibold text-destructive mb-4 flex items-center gap-2">
             <span>🛑</span> Critical Issues
@@ -71,7 +71,7 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
       )}
 
       {/* Recommendations */}
-      {data.recommendations.length > 0 && (
+      {data?.recommendations?.length > 0 && (
         <div className="console-card border-accent/30 bg-accent/5">
           <h3 className="text-lg font-semibold text-accent mb-4 flex items-center gap-2">
             <span>✓</span> Recommendations

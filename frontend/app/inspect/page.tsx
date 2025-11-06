@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer"
 import { InspectionForm } from "@/components/inspection-form"
 import { AIAnalysisResult } from "@/components/ai-analysis-result"
 import { motion } from "framer-motion"
+import { analyzePdf } from "@/lib/analysis"
 
 type Step = "form" | "analysis" | "confirm"
 
@@ -14,9 +15,15 @@ export default function InspectPage() {
   const [walletConnected, setWalletConnected] = useState(false)
   const [analysisData, setAnalysisData] = useState<any>(null)
 
-  const handleAnalyze = (data: any) => {
-    setAnalysisData(data)
-    setStep("analysis")
+  const handleAnalyze = async (file: File) => {
+    try {
+      const result = await analyzePdf(file);
+      setAnalysisData(result);
+      setStep("analysis");
+    } catch (error) {
+      console.error("PDF analysis failed:", error);
+      // Optionally, show an error message to the user
+    }
   }
 
   const handleSubmitBlockchain = () => {

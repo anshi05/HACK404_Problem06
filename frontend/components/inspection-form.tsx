@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 
 interface InspectionFormProps {
-  onAnalyze: (data: any) => void
+  onAnalyze: (file: File) => void
 }
 
 export function InspectionForm({ onAnalyze }: InspectionFormProps) {
@@ -18,30 +18,10 @@ export function InspectionForm({ onAnalyze }: InspectionFormProps) {
 
   const handleAnalyze = async () => {
     setIsLoading(true)
-
-    // Simulate AI analysis
-    setTimeout(() => {
-      const mockAnalysis = {
-        complianceScore: 8.2,
-        status: "warning",
-        warnings: [
-          "Fire extinguisher due for recertification in 3 days",
-          "Safety harness storage not properly organized",
-        ],
-        criticalIssues: ["Electrical safety certificate missing", "Emergency exit signage not visible"],
-        recommendations: [
-          "Schedule fire extinguisher service immediately",
-          "Arrange electrical certification audit",
-          "Update emergency protocols",
-        ],
-        location: formData.location,
-        siteId: formData.siteId,
-        timestamp: new Date().toISOString(),
-      }
-
-      onAnalyze(mockAnalysis)
-      setIsLoading(false)
-    }, 2000)
+    if (formData.file) {
+      await onAnalyze(formData.file);
+    }
+    setIsLoading(false);
   }
 
   return (
