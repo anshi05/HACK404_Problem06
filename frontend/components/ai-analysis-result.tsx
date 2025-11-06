@@ -5,9 +5,27 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { BlockchainSubmission } from "@/components/blockchain-submission"
 
+interface AnalysisResult {
+  label: string;
+  confidence: number;
+  prob_fake: number;
+  file: string;
+}
+
+interface AnalysisSummary {
+  real: number;
+  fake: number;
+  total: number;
+}
+
 interface AIAnalysisResultProps {
-  data: any
-  onSubmit: () => void
+  data: {
+    status: string;
+    count: number;
+    results: AnalysisResult[];
+    summary: AnalysisSummary;
+  };
+  onSubmit: () => void;
 }
 
 export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
@@ -17,9 +35,6 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
     return <BlockchainSubmission data={data} />
   }
 
-  const scoreColor =
-    data.complianceScore >= 8 ? "text-primary" : data.complianceScore >= 6 ? "text-yellow-500" : "text-destructive"
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -27,81 +42,35 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
       transition={{ duration: 0.6 }}
       className="space-y-8"
     >
-      {/* Score Card */}
+      {/* Summary Card */}
       <div className="console-card border-primary/30 bg-gradient-to-br from-card to-primary/5">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-foreground">Analysis Results</h2>
-          <div className={`text-5xl font-bold ${scoreColor}`}>{data.complianceScore}/10</div>
+          <h2 className="text-2xl font-bold text-foreground">Analysis Summary</h2>
+          <div className="text-5xl font-bold text-primary">{data.summary.real} / {data.summary.total}</div>
         </div>
-        <p className="text-muted-foreground text-sm">Compliance Score: {data.status}</p>
+        <p className="text-muted-foreground text-sm">Total Images Analyzed: {data.summary.total}</p>
+        <p className="text-muted-foreground text-sm">Real Images: {data.summary.real}</p>
+        <p className="text-muted-foreground text-sm">Fake Images: {data.summary.fake}</p>
       </div>
 
-      {/* Warnings */}
-      {data?.warnings?.length > 0 && (
-        <div className="console-card border-yellow-500/30 bg-yellow-500/5">
-          <h3 className="text-lg font-semibold text-yellow-500 mb-4 flex items-center gap-2">
-            <span>⚠</span> Warnings
-          </h3>
-          <ul className="space-y-2">
-            {data?.warnings?.map((warning: string, idx: number) => (
-              <li key={idx} className="text-sm text-foreground/80 flex gap-2">
-                <span className="text-muted-foreground">•</span>
-                {warning}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Critical Issues */}
-      {data?.criticalIssues?.length > 0 && (
-        <div className="console-card border-destructive/30 bg-destructive/5">
-          <h3 className="text-lg font-semibold text-destructive mb-4 flex items-center gap-2">
-            <span>🛑</span> Critical Issues
-          </h3>
-          <ul className="space-y-2">
-            {data.criticalIssues.map((issue: string, idx: number) => (
-              <li key={idx} className="text-sm text-foreground/80 flex gap-2">
-                <span className="text-muted-foreground">•</span>
-                {issue}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Recommendations */}
-      {data?.recommendations?.length > 0 && (
+      {/* Results */}
+      {data.results.length > 0 && (
         <div className="console-card border-accent/30 bg-accent/5">
           <h3 className="text-lg font-semibold text-accent mb-4 flex items-center gap-2">
-            <span>✓</span> Recommendations
+            <span>📊</span> Detailed Results
           </h3>
-          <ul className="space-y-2">
-            {data.recommendations.map((rec: string, idx: number) => (
-              <li key={idx} className="text-sm text-foreground/80 flex gap-2">
-                <span className="text-accent">→</span>
-                {rec}
+          <ul className="space-y-4">
+            {data.results.map((result: AnalysisResult, idx: number) => (
+              <li key={idx} className="text-sm text-foreground/80 flex flex-col gap-1">
+                <p><span className="font-medium">File:</span> {result.file}</p>
+                <p><span className="font-medium">Label:</span> {result.label}</p>
+                <p><span className="font-medium">Confidence:</span> {(result.confidence * 100).toFixed(2)}%</p>
+                <p><span className="font-medium">Probability of Fake:</span> {(result.prob_fake * 100).toFixed(2)}%</p>
               </li>
             ))}
           </ul>
         </div>
       )}
-
-      {/* Metadata */}
-      <div className="console-card grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-        <div>
-          <p className="text-muted-foreground mb-1">Location</p>
-          <p className="text-foreground font-mono text-xs">{data.location}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground mb-1">Site ID</p>
-          <p className="text-foreground font-mono text-xs">{data.siteId}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground mb-1">Timestamp</p>
-          <p className="text-foreground font-mono text-xs">{new Date(data.timestamp).toLocaleDateString()}</p>
-        </div>
-      </div>
 
       {/* Actions */}
       <div className="flex gap-4 justify-end">
