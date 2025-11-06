@@ -15,6 +15,7 @@ export function InspectionForm({ onAnalyze }: InspectionFormProps) {
     file: null as File | null,
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   const handleAnalyze = async () => {
     setIsLoading(true)
@@ -48,7 +49,23 @@ export function InspectionForm({ onAnalyze }: InspectionFormProps) {
 
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">Upload Inspection File</label>
-          <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer group">
+          <div
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer group
+              ${isDragging ? "border-primary/50 bg-primary/5" : "border-border hover:border-primary/50"}`}
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDragging(true);
+            }}
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsDragging(false);
+              const files = e.dataTransfer.files;
+              if (files && files.length > 0) {
+                setFormData({ ...formData, file: files[0] });
+              }
+            }}
+          >
             <input
               type="file"
               onChange={(e) => setFormData({ ...formData, file: e.target.files?.[0] || null })}
