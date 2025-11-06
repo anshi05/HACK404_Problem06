@@ -51,26 +51,8 @@ export function HeroSection() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="relative w-full min-h-screen bg-background flex flex-col items-center justify-center overflow-hidden "
+      className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent"
     >
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-transparent to-accent/10" />
-        <svg className="absolute w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-              <path
-                d="M 50 0 L 0 0 0 50"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="0.5"
-                className="text-accent/20"
-              />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
-
       <motion.div
         className="absolute w-96 h-96 rounded-full bg-gradient-to-r from-primary/30 to-accent/30 blur-3xl pointer-events-none"
         animate={{

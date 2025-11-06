@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { HeroSection } from "@/components/hero-section"
+import { ProblemSolutionSection } from "@/components/problem-solution-section"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { useLoading } from "@/components/loading-provider"
@@ -55,7 +56,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col bg-background relative overflow-hidden">
-      <Navigation walletConnected={walletConnected} onWalletConnect={handleWalletConnect} />
+      <Navigation walletConnected={walletConnected} onWalletConnect={handleWalletConnect} isHomePage={true} />
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-[1]">
         <motion.div
@@ -76,6 +77,9 @@ export default function Home() {
 
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Problem and Solution Section */}
+      <ProblemSolutionSection />
 
       <Footer />
     </main>

@@ -10,9 +10,10 @@ import { useLoading } from "@/components/loading-provider"
 interface NavigationProps {
   walletConnected: boolean
   onWalletConnect: () => void
+  isHomePage?: boolean
 }
 
-export function Navigation({ walletConnected, onWalletConnect }: NavigationProps) {
+export function Navigation({ walletConnected, onWalletConnect, isHomePage }: NavigationProps) {
   const { user, isLoggedIn, logout } = useAuth()
   const { getUnreadCount } = useNotifications()
   const unreadCount = getUnreadCount()
@@ -36,12 +37,14 @@ export function Navigation({ walletConnected, onWalletConnect }: NavigationProps
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md"
+      className={`sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md ${
+        isHomePage ? "bg-transparent border-transparent" : ""
+      }`}
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <img src="/logo.png" alt="AuditVault" className="w-8 h-8" />
-          <span className="font-bold text-foreground hidden sm:inline">AuditVault</span>
+          <span className="font-bold text-foreground hidden sm:inline">Audit<span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent inline audiowide-regular">Vault</span></span>
         </Link>
 
         {/* Links */}

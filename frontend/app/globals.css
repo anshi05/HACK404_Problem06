@@ -198,6 +198,16 @@
         radial-gradient(circle at 60% 50%, rgba(255, 0, 150, 0.1) 0%, transparent 40%);
     }
   }
+
+  /* Hide scrollbar for elements with scrollbar-hide class */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
 }
 
 @layer components {
