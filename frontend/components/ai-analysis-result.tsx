@@ -323,29 +323,38 @@ export function AIAnalysisResult({ data, file, onSubmit, onStartLoading }: AIAna
         )}
       </AnimatePresence>
 
-      {showConfirmation && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
-          className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-green-500/10 border border-green-500/20 text-green-800 px-6 py-3 rounded-lg shadow-lg z-40"
-        >
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-6 h-6" />
-            <span className="font-semibold">File Uploaded Successfully!</span>
-          </div>
-          <p className="text-sm mt-1">IPFS CID: {uploadedIpfsCid}</p>
-          <p className="text-sm">Content Hash: {uploadedContentHash}</p>
-          <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" onClick={handleCancelSign} className="text-green-800 border-green-800 hover:bg-green-100">
-              Cancel
-            </Button>
-            <Button onClick={handleConfirmSign} className="bg-green-600 hover:bg-green-700 text-white">
-              Confirm Sign
-            </Button>
-          </div>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {showConfirmation && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative bg-card border border-green-500/20 text-green-800 p-6 rounded-lg shadow-lg max-w-sm w-full"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <CheckCircle className="w-6 h-6" />
+                <span className="font-semibold text-foreground">File Uploaded Successfully!</span>
+              </div>
+              <p className="text-sm text-muted-foreground mb-1">IPFS CID: <span className="font-mono text-foreground break-all">{uploadedIpfsCid}</span></p>
+              <p className="text-sm text-muted-foreground">Content Hash: <span className="font-mono text-foreground break-all">{uploadedContentHash}</span></p>
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={handleCancelSign} className="text-destructive border-destructive hover:bg-destructive/10">
+                  Cancel
+                </Button>
+                <Button onClick={handleConfirmSign} className="bg-green-600 hover:bg-green-700 text-white">
+                  Confirm Sign
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Actions */}
       <motion.div
