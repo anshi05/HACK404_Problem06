@@ -9,6 +9,7 @@ import { BlockchainSubmission } from "@/components/blockchain-submission"
 import { motion } from "framer-motion"
 import { analyzePdf } from "@/lib/analysis"
 import { uploadFile } from "@/lib/blockchain"
+import { LoadingScreen } from "@/components/loading-screen"
 
 // Add these two interfaces
 interface AnalysisResult {
@@ -44,6 +45,9 @@ export default function InspectPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null); // Keep this state
   const [signPayloadResponse, setSignPayloadResponse] = useState<any>(null); // New state for sign payload response
   const [isSigning, setIsSigning] = useState(false); // New state for signing status
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false); // New state for loading screen for blockchain submission
+  const [loadingText, setLoadingText] = useState<string[]>([]); // New state for loading screen text for blockchain submission
+  const [showAnalysisLoading, setShowAnalysisLoading] = useState(false); // New state for analysis loading screen
 
   useEffect(() => {
     setStep("form");
@@ -52,15 +56,22 @@ export default function InspectPage() {
   }, []);
 
   const handleAnalyze = async (file: File) => {
-    try {
-      setUploadedFile(file); // Store the file
-      const result = await analyzePdf(file);
-      setAnalysisData({ ...result }); 
-      setStep("analysis");
-    } catch (error) {
-      console.error("PDF analysis failed:", error);
-      // Optionally, show an error message to the user
-    }
+    setShowAnalysisLoading(true); // Show analysis loading screen
+
+    // Simulate 2-second loading, then proceed
+    setTimeout(async () => {
+      try {
+        setUploadedFile(file); // Store the file
+        const result = await analyzePdf(file);
+        setAnalysisData({ ...result }); 
+        setStep("analysis");
+      } catch (error) {
+        console.error("PDF analysis failed:", error);
+        // Optionally, show an error message to the user
+      } finally {
+        setShowAnalysisLoading(false); // Hide analysis loading screen
+      }
+    }, 2000); // 2 second delay
   }
 
   const handleSubmitBlockchain = async (ipfsCid: string, contentHash: string) => {
@@ -94,7 +105,17 @@ export default function InspectPage() {
     } finally {
       setIsSigning(false); // Reset signing state
     }
-  };
+};
+
+const startSubmissionLoading = (messages: string[]) => {
+  setLoadingText(messages);
+  setShowLoadingScreen(true);
+};
+
+const onMainLoadingComplete = () => {
+  setShowLoadingScreen(false);
+  setStep("confirm"); // Transition to confirm step after loading
+};
 
   return (
     <main className="min-h-screen flex flex-col bg-background">
@@ -118,13 +139,21 @@ export default function InspectPage() {
 
           {step === "form" && <InspectionForm onAnalyze={handleAnalyze} />}
           {step === "analysis" && analysisData && uploadedFile && (
-            <AIAnalysisResult data={analysisData} file={uploadedFile} onSubmit={handleSubmitBlockchain} />
+            <AIAnalysisResult data={analysisData} file={uploadedFile} onSubmit={handleSubmitBlockchain} onStartLoading={startSubmissionLoading} />
           )}
           {step === "confirm" && analysisData && (
             <BlockchainSubmission data={analysisData} signPayloadResponse={signPayloadResponse} isSigning={isSigning} />
           )}
         </div>
       </div>
+
+      {showLoadingScreen && (
+        <LoadingScreen onComplete={onMainLoadingComplete} terminalText={loadingText} />
+      )}
+
+      {showAnalysisLoading && (
+        <LoadingScreen onComplete={() => {}} terminalText={["> ANALYZING DOCUMENT...", "> PERFORMING FORGERY CHECKS..."]} />
+      )}
 
       <Footer />
     </main>

@@ -8,12 +8,12 @@ export function BinaryColumn({ delay }: { delay: number }) {
 
   useEffect(() => {
     const createDrop = (id: number) => {
-      const speed = 3 + Math.random() * 10
+      const speed = 8 + Math.random() * 15 // Increased speed
       const value = Math.random() > 0.5 ? "1" : "0"
       return { id, position: -100, speed, value }
     }
 
-    const initialDrops = Array.from({ length: 25 }, (_, i) => createDrop(i))
+    const initialDrops = Array.from({ length: 40 }, (_, i) => createDrop(i)) // Increased initial drops
     setDrops(initialDrops)
 
     const interval = setInterval(() => {
@@ -21,8 +21,8 @@ export function BinaryColumn({ delay }: { delay: number }) {
         currentDrops.map(drop => ({
           ...drop,
           position: drop.position + drop.speed
-        })).filter(drop => drop.position < 300)
-        .map((drop, index) => drop.position < 300 ? drop : createDrop(Date.now() + index))
+        })).filter(drop => drop.position < 150) // Adjusted threshold
+        .map((drop, index) => drop.position < 150 ? drop : createDrop(Date.now() + index)) // Adjusted threshold
       )
     }, 15)
 

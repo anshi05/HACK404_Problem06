@@ -34,9 +34,10 @@ interface AIAnalysisResultProps {
   };
   file: File;
   onSubmit: (ipfsCid: string, contentHash: string) => void;
+  onStartLoading: (messages: string[]) => void; // New prop
 }
 
-export function AIAnalysisResult({ data, file, onSubmit }: AIAnalysisResultProps) {
+export function AIAnalysisResult({ data, file, onSubmit, onStartLoading }: AIAnalysisResultProps) {
   const [submitted, setSubmitted] = useState(false);
   const [selectedItem, setSelectedItem] = useState<AnalysisResult | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -76,6 +77,7 @@ export function AIAnalysisResult({ data, file, onSubmit }: AIAnalysisResultProps
     if (!isAllReal) {
       setShowForgeryWarning(true);
     } else {
+      onStartLoading(["> INITIATING BLOCKCHAIN SUBMISSION...", "> UPLOADING DOCUMENT TO IPFS..."]); // Call loading screen
       proceedWithSubmission();
     }
   };

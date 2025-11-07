@@ -14,15 +14,12 @@ export function InspectionForm({ onAnalyze }: InspectionFormProps) {
     siteId: `SITE-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
     file: null as File | null,
   })
-  const [isLoading, setIsLoading] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
 
   const handleAnalyze = async () => {
-    setIsLoading(true)
     if (formData.file) {
       await onAnalyze(formData.file);
     }
-    setIsLoading(false);
   }
 
   return (
@@ -99,17 +96,10 @@ export function InspectionForm({ onAnalyze }: InspectionFormProps) {
         </Button>
         <Button
           onClick={handleAnalyze}
-          disabled={!formData.location || !formData.file || isLoading}
+          disabled={!formData.location || !formData.file}
           className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
         >
-          {isLoading ? (
-            <>
-              <span className="inline-block animate-spin">⟳</span>
-              Checking for Forgery...
-            </>
-          ) : (
-            "Perform Forgery Check →"
-          )}
+          {"Perform Forgery Check →"}
         </Button>
       </div>
     </motion.div>
