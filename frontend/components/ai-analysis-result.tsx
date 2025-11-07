@@ -34,11 +34,9 @@ interface AIAnalysisResultProps {
   };
   file: File;
   onSubmit: (ipfsCid: string, contentHash: string) => void;
-  onSignPayloadComplete: (result: any) => void;
-  signPayloadResponse: any;
 }
 
-export function AIAnalysisResult({ data, file, onSubmit, onSignPayloadComplete, signPayloadResponse }: AIAnalysisResultProps) {
+export function AIAnalysisResult({ data, file, onSubmit }: AIAnalysisResultProps) {
   const [submitted, setSubmitted] = useState(false);
   const [selectedItem, setSelectedItem] = useState<AnalysisResult | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -92,6 +90,7 @@ export function AIAnalysisResult({ data, file, onSubmit, onSignPayloadComplete, 
   };
 
   const handleConfirmSign = () => {
+    console.log("handleConfirmSign called"); // Added for debugging
     if (uploadedIpfsCid && uploadedContentHash) {
       onSubmit(uploadedIpfsCid, uploadedContentHash); // This will update the parent's state and trigger BlockchainSubmission
     }

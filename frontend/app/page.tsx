@@ -9,6 +9,8 @@ import { ProblemSolutionSection } from "@/components/problem-solution-section"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { useLoading } from "@/components/loading-provider"
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { injected } from 'wagmi/connectors'
 
 export default function Home() {
   const [walletConnected, setWalletConnected] = useState(false)
@@ -16,8 +18,16 @@ export default function Home() {
   const [scrollY, setScrollY] = useState(0)
   const { startLoading, stopLoading } = useLoading()
 
+  const { address, isConnected } = useAccount()
+  const { connect } = useConnect()
+  const { disconnect } = useDisconnect()
+
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
-    // stopLoading() // Removed: Loader now controls its own visibility duration
+    setIsMounted(true);
+    console.log("useEffect - isConnected changed:", isConnected); // Debug log
+    setWalletConnected(isConnected)
 
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
@@ -34,18 +44,22 @@ export default function Home() {
       window.removeEventListener("mousemove", handleMouseMove)
       window.removeEventListener("scroll", handleScroll)
     }
-  }, [])
+  }, [isConnected])
 
   const handleWalletConnect = async () => {
-    if (walletConnected) {
-      setWalletConnected(false)
-      return
-    }
-
+    console.log("handleWalletConnect called."); // Debug log
+    
     try {
       startLoading(["> CONNECTING TO AUDITVAULT NETWORK...", "> AUTHENTICATING WALLET...", "> SECURE CONNECTION ESTABLISHED."])
+      
+      if (isConnected) { // Use isConnected directly from wagmi
+        console.log("Disconnecting wallet..."); // Debug log
+        disconnect()
+      } else {
+        console.log("Connecting wallet..."); // Debug log
+        connect({ connector: injected({ target: 'metaMask' }) })
+      }
       console.log("[v0] Wallet connection initiated")
-      setWalletConnected(true)
       console.log("[v0] Wallet connected successfully")
       // stopLoading() - This will be handled by the next page's useEffect
     } catch (error) {
@@ -56,7 +70,9 @@ export default function Home() {
 
   return (
     <main className="min-h-screen flex flex-col bg-background relative overflow-hidden">
-      <Navigation walletConnected={walletConnected} onWalletConnect={handleWalletConnect} isHomePage={true} />
+      {isMounted && (
+        <Navigation walletConnected={walletConnected} onWalletConnect={handleWalletConnect} isHomePage={true} />
+      )}
 
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-[1]">
         <motion.div

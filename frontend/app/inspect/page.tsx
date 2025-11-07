@@ -42,6 +42,8 @@ export default function InspectPage() {
   const [walletConnected, setWalletConnected] = useState(false)
   const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null); // Keep this state
+  const [signPayloadResponse, setSignPayloadResponse] = useState<any>(null); // New state for sign payload response
+  const [isSigning, setIsSigning] = useState(false); // New state for signing status
 
   useEffect(() => {
     setStep("form");
@@ -61,11 +63,37 @@ export default function InspectPage() {
     }
   }
 
-  const handleSubmitBlockchain = (ipfsCid: string, contentHash: string) => {
+  const handleSubmitBlockchain = async (ipfsCid: string, contentHash: string) => {
+    console.log("handleSubmitBlockchain called with IPFS CID:", ipfsCid, "and Content Hash:", contentHash); // Added for debugging
     if (analysisData) {
       setAnalysisData(prev => prev ? { ...prev, ipfs_cid: ipfsCid, content_hash: contentHash } : null);
     }
     setStep("confirm");
+
+    // New logic to call /sign-payload directly
+    setIsSigning(true); // Set signing state to true
+    try {
+      const response = await fetch(`http://localhost:8001/sign-payload?ipfs_cid=${ipfsCid}&summary=Routine%20inspection%20passed`, {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Failed to sign payload");
+      }
+
+      const signPayloadResult = await response.json();
+      console.log("Sign Payload Result from inspect/page.tsx:", signPayloadResult); // Log the result for debugging
+      setSignPayloadResponse(signPayloadResult);
+    } catch (error: any) {
+      console.error("Error signing payload in inspect/page.tsx:", error);
+      // Handle error, maybe show an error message to the user
+    } finally {
+      setIsSigning(false); // Reset signing state
+    }
   };
 
   return (
@@ -93,7 +121,7 @@ export default function InspectPage() {
             <AIAnalysisResult data={analysisData} file={uploadedFile} onSubmit={handleSubmitBlockchain} />
           )}
           {step === "confirm" && analysisData && (
-            <BlockchainSubmission data={analysisData} />
+            <BlockchainSubmission data={analysisData} signPayloadResponse={signPayloadResponse} isSigning={isSigning} />
           )}
         </div>
       </div>
