@@ -4,10 +4,9 @@
 
 <img src="frontend\public\name2.png" alt="AuditVault Title" width="400"/>
 
-# **AuditVault**
-### Decentralised Compliance & Audit Trail Platform for Construction and Industrial Maintenance 
 
 </div>
+<br/>
 
 
 ## Project Overview
