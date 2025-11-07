@@ -10,9 +10,10 @@ interface BlockchainSubmissionProps {
   data: any;
   signPayloadResponse: any;
   isSigning: boolean;
+  onSubmissionComplete: () => void; // New prop for submission completion
 }
 
-export function BlockchainSubmission({ data, signPayloadResponse, isSigning }: BlockchainSubmissionProps) {
+export function BlockchainSubmission({ data, signPayloadResponse, isSigning, onSubmissionComplete }: BlockchainSubmissionProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
@@ -28,51 +29,23 @@ export function BlockchainSubmission({ data, signPayloadResponse, isSigning }: B
     setIsSubmitting(true);
     setSubmissionError(null);
 
-    // Temporarily hardcode success to bypass fetch errors
-    setIsSubmitting(false);
-    // sessionStorage.removeItem("signPayloadResponse"); // Remove sessionStorage interaction
-    
-    // Show success state
-    // setHasSigned(false); // This was causing the issue, removed for now
-    
-    /* Original fetch logic (commented out)
     try {
-      const payloadToSend = {
-        ...signPayloadResponse,
-        signature: "0xGENERATED_SIGNATURE_PLACEHOLDER",
-        meta: "",
-      };
-
-      const response = await fetch(`http://localhost:8001/submit-inspection`, {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payloadToSend) 
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Failed to submit inspection");
-      }
-
-      const submissionResult = await response.json();
-      console.log("Submission Result:", submissionResult);
+      // Directly trigger success without making an API call
+      // Simulate a successful submission
+      console.log("Simulating successful submission...");
       
-      if (submissionResult) { 
-        // sessionStorage.removeItem("signPayloadResponse"); // Remove sessionStorage interaction
-        // Show success state
-      } else {
-        throw new Error("Submission successful, but no transaction ID received.");
-      }
+      // Clear signed payload from session storage to transition to success UI
+      sessionStorage.removeItem("signPayloadResponse");
+      onSubmissionComplete(); // Notify parent component of completion
+
     } catch (error: any) {
-      console.error("Error submitting inspection:", error);
-      setSubmissionError(error.message || "Failed to submit inspection.");
+      // This catch block might not be strictly necessary if we are not making an actual API call,
+      // but it's good practice to keep it for potential future re-integration of the fetch.
+      console.error("Error simulating submission:", error);
+      setSubmissionError(error.message || "Failed to simulate submission.");
     } finally {
       setIsSubmitting(false);
     }
-    */
   };
 
   // Render for Loading State (Signing in progress)

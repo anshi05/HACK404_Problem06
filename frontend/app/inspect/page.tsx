@@ -142,7 +142,12 @@ const onMainLoadingComplete = () => {
             <AIAnalysisResult data={analysisData} file={uploadedFile} onSubmit={handleSubmitBlockchain} onStartLoading={startSubmissionLoading} />
           )}
           {step === "confirm" && analysisData && (
-            <BlockchainSubmission data={analysisData} signPayloadResponse={signPayloadResponse} isSigning={isSigning} />
+            <BlockchainSubmission 
+              data={analysisData} 
+              signPayloadResponse={signPayloadResponse} 
+              isSigning={isSigning}
+              onSubmissionComplete={() => setSignPayloadResponse(null)} // New prop being passed
+            />
           )}
         </div>
       </div>
