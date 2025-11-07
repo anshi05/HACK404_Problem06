@@ -36,17 +36,19 @@ export default function InspectPage() {
 
       <div className="flex-1 px-4 py-12 md:py-20">
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-12"
-          >
-            <h1 className="text-4xl font-bold text-foreground mb-2">Submit New Safety Inspection</h1>
-            <p className="text-muted-foreground">
-              Upload your inspection documents for AI analysis and blockchain recording
-            </p>
-          </motion.div>
+          {step === "form" && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mb-12"
+            >
+              <h1 className="text-4xl font-bold text-foreground mb-2">Submit New Safety Inspection</h1>
+              <p className="text-muted-foreground">
+                Upload your inspection documents for AI analysis and blockchain recording
+              </p>
+            </motion.div>
+          )}
 
           {step === "form" && <InspectionForm onAnalyze={handleAnalyze} />}
           {step === "analysis" && analysisData && (
