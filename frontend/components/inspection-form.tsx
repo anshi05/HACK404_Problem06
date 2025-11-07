@@ -105,10 +105,10 @@ export function InspectionForm({ onAnalyze }: InspectionFormProps) {
           {isLoading ? (
             <>
               <span className="inline-block animate-spin">⟳</span>
-              Analyzing...
+              Checking for Forgery...
             </>
           ) : (
-            "Analyze with AI →"
+            "Perform Forgery Check →"
           )}
         </Button>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { BlockchainSubmission } from "@/components/blockchain-submission"
 
 interface AnalysisResult {
@@ -29,11 +29,15 @@ interface AIAnalysisResultProps {
 }
 
 export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
-  const [submitted, setSubmitted] = useState(false)
+  const [submitted, setSubmitted] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   if (submitted) {
-    return <BlockchainSubmission data={data} />
+    return <BlockchainSubmission data={data} />;
   }
+
+  const isAllReal = data.summary.real === data.summary.total && data.summary.total > 0;
+  const successRate = (data.summary.real / data.summary.total) * 100;
 
   return (
     <motion.div
@@ -42,48 +46,216 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
       transition={{ duration: 0.6 }}
       className="space-y-8"
     >
-      {/* Summary Card */}
-      <div className="console-card border-primary/30 bg-gradient-to-br from-card to-primary/5">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-foreground">Analysis Summary</h2>
-          <div className="text-5xl font-bold text-primary">{data.summary.real} / {data.summary.total}</div>
-        </div>
-        <p className="text-muted-foreground text-sm">Total Images Analyzed: {data.summary.total}</p>
-        <p className="text-muted-foreground text-sm">Real Images: {data.summary.real}</p>
-        <p className="text-muted-foreground text-sm">Fake Images: {data.summary.fake}</p>
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="text-center space-y-4"
+      >
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          AI Forgery Analysis Complete
+        </h1>
+        <p className="text-muted-foreground text-lg">
+          Documents have been analyzed using advanced neural networks
+        </p>
+      </motion.div>
+
+      {/* Summary Cards Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Summary Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.3 }}
+          className="console-card border-primary/30 bg-gradient-to-br from-card to-primary/5 p-6 rounded-xl shadow-lg lg:col-span-2 relative overflow-hidden"
+        >
+          {/* Animated Background */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent animate-pulse" />
+          
+          <div className="relative z-10">
+            <div className="flex flex-col lg:flex-row items-center justify-between mb-6">
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold text-foreground flex items-center gap-3">
+                  <div className={`w-3 h-3 rounded-full ${isAllReal ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                  Security Analysis Summary
+                </h2>
+                <p className="text-muted-foreground">AI-powered forgery detection results</p>
+              </div>
+              
+              <div className="text-center lg:text-right mt-4 lg:mt-0">
+                <div className={`text-3xl font-black ${isAllReal ? 'text-green-500' : 'text-red-500'}`}>
+                  {successRate.toFixed(1)}%
+                </div>
+                <div className="text-sm text-muted-foreground">Success Rate</div>
+              </div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center p-4 rounded-lg bg-background/50 border border-border">
+                <div className="text-2xl font-bold text-foreground">{data.summary.total}</div>
+                <div className="text-xs text-muted-foreground uppercase tracking-wider">Total Files</div>
+              </div>
+              <div className="text-center p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                <div className="text-2xl font-bold text-green-500">{data.summary.real}</div>
+                <div className="text-xs text-green-400 uppercase tracking-wider">Authentic</div>
+              </div>
+              <div className="text-center p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                <div className="text-2xl font-bold text-red-500">{data.summary.fake}</div>
+                <div className="text-xs text-red-400 uppercase tracking-wider">Forged</div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Status Card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4 }}
+          className="console-card border-accent/30 bg-gradient-to-br from-accent/5 to-accent/10 p-6 rounded-xl shadow-lg"
+        >
+          <div className="text-center space-y-4">
+            <div className={`w-16 h-16 mx-auto rounded-full flex items-center justify-center ${
+              isAllReal ? 'bg-green-500/20 border border-green-500/30' : 'bg-red-500/20 border border-red-500/30'
+            }`}>
+              <div className={`text-2xl ${isAllReal ? 'text-green-500' : 'text-red-500'}`}>
+                {isAllReal ? '✓' : '✗'}
+              </div>
+            </div>
+            <div>
+              <h3 className="font-bold text-foreground text-lg">
+                {isAllReal ? 'Verification Passed' : 'Verification Failed'}
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {isAllReal 
+                  ? 'All documents are authentic and ready for blockchain submission'
+                  : 'Some documents require further inspection'
+                }
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Results */}
+      {/* Detailed Results */}
       {data.results.length > 0 && (
-        <div className="console-card border-accent/30 bg-accent/5">
-          <h3 className="text-lg font-semibold text-accent mb-4 flex items-center gap-2">
-            <span>📊</span> Detailed Results
-          </h3>
-          <ul className="space-y-4">
-            {data.results.map((result: AnalysisResult, idx: number) => (
-              <li key={idx} className="text-sm text-foreground/80 flex flex-col gap-1">
-                <p><span className="font-medium">File:</span> {result.file}</p>
-                <p><span className="font-medium">Label:</span> {result.label}</p>
-                <p><span className="font-medium">Confidence:</span> {(result.confidence * 100).toFixed(2)}%</p>
-                <p><span className="font-medium">Probability of Fake:</span> {(result.prob_fake * 100).toFixed(2)}%</p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="console-card border-border/50 bg-gradient-to-b from-card to-card/80 p-6 rounded-xl shadow-lg"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-foreground flex items-center gap-3">
+              <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+              Detailed Analysis Results
+            </h3>
+            <div className="text-sm text-muted-foreground">
+              {data.results.length} files processed
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            {data.results.map((result: AnalysisResult, idx: number) => {
+              const isReal = result.label === 'Real';
+              const confidenceColor = result.confidence > 0.9 ? 'text-green-500' : 
+                                   result.confidence > 0.7 ? 'text-yellow-500' : 'text-red-500';
+              
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.6 + idx * 0.1 }}
+                  className={`p-4 rounded-lg border transition-all duration-300 cursor-pointer hover:scale-[1.02] ${
+                    isReal 
+                      ? 'bg-green-500/5 border-green-500/20 hover:border-green-500/40' 
+                      : 'bg-red-500/5 border-red-500/20 hover:border-red-500/40'
+                  }`}
+                  onClick={() => setSelectedFile(selectedFile === result.file ? null : result.file)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className={`w-3 h-3 rounded-full ${isReal ? 'bg-green-500' : 'bg-red-500'}`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-foreground truncate">
+                          {result.file.split('/').pop()}
+                        </p>
+                        <div className="flex items-center gap-4 mt-1 text-sm">
+                          <span className={`font-bold ${isReal ? 'text-green-400' : 'text-red-400'}`}>
+                            {isReal ? '✅ AUTHENTIC' : '❌ FORGED'}
+                          </span>
+                          <span className="text-muted-foreground">
+                            Confidence: <span className={confidenceColor}>{(result.confidence * 100).toFixed(1)}%</span>
+                          </span>
+                          <span className="text-muted-foreground">
+                            Risk: <span className="text-foreground">{(result.prob_fake * 100).toFixed(1)}%</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Confidence Bar */}
+                    <div className="w-24 ml-4">
+                      <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${result.confidence * 100}%` }}
+                          transition={{ delay: 0.8 + idx * 0.1, duration: 1 }}
+                          className={`h-full rounded-full ${
+                            result.confidence > 0.9 ? 'bg-green-500' :
+                            result.confidence > 0.7 ? 'bg-yellow-500' : 'bg-red-500'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
       )}
 
       {/* Actions */}
-      <div className="flex gap-4 justify-end">
-        <Button variant="outline" className="border-border hover:bg-card bg-transparent">
-          Back to Form
-        </Button>
-        <Button
-          onClick={() => setSubmitted(true)}
-          className="bg-accent hover:bg-accent/90 text-accent-foreground gap-2"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8 }}
+        className="flex flex-col sm:flex-row gap-4 justify-between items-center pt-6 border-t border-border/50"
+      >
+        <Button 
+          variant="outline" 
+          className="border-border hover:bg-card bg-transparent gap-2 min-w-[160px]"
         >
-          Submit to Blockchain →
+          ← Back to Analysis
         </Button>
-      </div>
+        
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-muted-foreground text-center sm:text-right">
+            {isAllReal ? (
+              <span className="text-green-500">✓ Ready for secure blockchain submission</span>
+            ) : (
+              <span className="text-yellow-500">⚠ Review forged documents before submission</span>
+            )}
+          </div>
+          <Button
+            onClick={() => setSubmitted(true)}
+            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white gap-3 min-w-[200px] shadow-lg shadow-primary/20"
+            size="lg"
+          >
+            <span>Secure Blockchain Submission</span>
+            <motion.span
+              animate={{ x: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              →
+            </motion.span>
+          </Button>
+        </div>
+      </motion.div>
     </motion.div>
   )
 }
