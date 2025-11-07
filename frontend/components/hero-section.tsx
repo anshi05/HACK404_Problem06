@@ -161,7 +161,7 @@ export function HeroSection() {
               </motion.button>
             </Link>
 
-            <Link href="/dashboard">
+            <Link href="/history">
               <motion.button
                 whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(34, 197, 211, 0.6)" }}
                 whileTap={{ scale: 0.95 }}

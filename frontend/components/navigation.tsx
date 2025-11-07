@@ -55,7 +55,7 @@ export function Navigation({ isHomePage }: NavigationProps) {
         ? "/auditor-dashboard"
         : user?.role === "regulator"
           ? "/regulator-dashboard"
-          : "/inspect"
+          : "/history"
     : "/auth"
 
   const dashboardLabel = user?.role ? 
