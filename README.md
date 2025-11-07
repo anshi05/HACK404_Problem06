@@ -2,7 +2,7 @@
 
 <img src="frontend\public\logo2.png" alt="AuditVault Logo" width="120"/>
 
-<img src="frontend\public\name.png" alt="AuditVault Title" width="400"/>
+<img src="frontend\public\name2.png" alt="AuditVault Title" width="400"/>
 
 # **AuditVault**
 ### Decentralised Compliance & Audit Trail Platform for Construction and Industrial Maintenance 
