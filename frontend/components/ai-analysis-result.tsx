@@ -48,6 +48,7 @@ export function AIAnalysisResult({ data, file, onSubmit, onSignPayloadComplete, 
   const [isProcessingUpload, setIsProcessingUpload] = useState(false);
   const [forgedPdfUrl, setForgedPdfUrl] = useState<string | null>(null); // State for forged PDF URL
   const [showForgedPdfPreview, setShowForgedPdfPreview] = useState(false); // State to control forged PDF preview modal
+  const [showForgeryWarning, setShowForgeryWarning] = useState(false); // New state for forgery warning
 
   useEffect(() => {
     if (file) {
@@ -57,7 +58,7 @@ export function AIAnalysisResult({ data, file, onSubmit, onSignPayloadComplete, 
     }
   }, [file]);
 
-  const handleSecureBlockchainSubmission = async () => {
+  const proceedWithSubmission = async () => {
     setIsProcessingUpload(true);
     try {
       const { ipfs_cid, content_hash } = await uploadFile(file);
@@ -69,7 +70,25 @@ export function AIAnalysisResult({ data, file, onSubmit, onSignPayloadComplete, 
       // Handle error, maybe show an alert to the user
     } finally {
       setIsProcessingUpload(false);
+      setShowForgeryWarning(false); // Hide warning if shown
     }
+  };
+
+  const handleSecureBlockchainSubmission = () => {
+    if (!isAllReal) {
+      setShowForgeryWarning(true);
+    } else {
+      proceedWithSubmission();
+    }
+  };
+
+  const handleConfirmForgerySubmission = () => {
+    setShowForgeryWarning(false); // Hide the warning popup
+    proceedWithSubmission(); // Proceed with the submission
+  };
+
+  const handleCancelForgerySubmission = () => {
+    setShowForgeryWarning(false); // Simply hide the warning popup
   };
 
   const handleConfirmSign = () => {
@@ -410,6 +429,44 @@ export function AIAnalysisResult({ data, file, onSubmit, onSignPayloadComplete, 
               <h2 className="text-3xl font-bold text-foreground mb-6">Forged Document Preview</h2>
               <div className="h-[70vh] w-full">
                 <iframe src={forgedPdfUrl} width="100%" height="100%" className="border-none" />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Forgery Warning Modal */}
+      <AnimatePresence>
+        {showForgeryWarning && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+            onClick={handleCancelForgerySubmission}
+          >
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+              className="bg-card border border-border p-3 rounded-xl shadow-2xl max-w-xs w-full relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-lg font-bold text-red-500 mb-2 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Forgery Detected!
+              </h2>
+              <p className="text-sm text-foreground mb-3">
+                Some images in your document appear to be forged or AI-generated. 
+                Do you really want to proceed with blockchain submission?
+              </p>
+              <div className="flex justify-end gap-2 mt-3">
+                <Button variant="outline" onClick={handleCancelForgerySubmission} className="text-foreground border-border hover:bg-card text-xs px-3 py-1.5">
+                  No, Cancel
+                </Button>
+                <Button onClick={handleConfirmForgerySubmission} className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5">
+                  Yes, Continue Anyway
+                </Button>
               </div>
             </motion.div>
           </motion.div>
