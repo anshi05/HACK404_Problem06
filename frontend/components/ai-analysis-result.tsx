@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { BlockchainSubmission } from "@/components/blockchain-submission"
 import Image from "next/image";
 import { CheckCircle, AlertTriangle, Bot } from "lucide-react";
+import { uploadFile } from "@/lib/blockchain";
 
 interface AnalysisResult {
   label: string;
@@ -28,18 +29,61 @@ interface AIAnalysisResultProps {
     count: number;
     results: AnalysisResult[];
     summary: AnalysisSummary;
+    ipfs_cid?: string;
+    content_hash?: string;
   };
-  onSubmit: () => void;
+  file: File;
+  onSubmit: (ipfsCid: string, contentHash: string) => void;
+  onSignPayloadComplete: (result: any) => void;
+  signPayloadResponse: any;
 }
 
-export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
+export function AIAnalysisResult({ data, file, onSubmit, onSignPayloadComplete, signPayloadResponse }: AIAnalysisResultProps) {
   const [submitted, setSubmitted] = useState(false);
   const [selectedItem, setSelectedItem] = useState<AnalysisResult | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [uploadedIpfsCid, setUploadedIpfsCid] = useState<string | null>(null);
+  const [uploadedContentHash, setUploadedContentHash] = useState<string | null>(null);
+  const [isProcessingUpload, setIsProcessingUpload] = useState(false);
+  const [forgedPdfUrl, setForgedPdfUrl] = useState<string | null>(null); // State for forged PDF URL
+  const [showForgedPdfPreview, setShowForgedPdfPreview] = useState(false); // State to control forged PDF preview modal
 
-  if (submitted) {
-    return <BlockchainSubmission data={data} />;
-  }
+  useEffect(() => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setForgedPdfUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [file]);
+
+  const handleSecureBlockchainSubmission = async () => {
+    setIsProcessingUpload(true);
+    try {
+      const { ipfs_cid, content_hash } = await uploadFile(file);
+      setUploadedIpfsCid(ipfs_cid);
+      setUploadedContentHash(content_hash);
+      setShowConfirmation(true); // Show confirmation after upload
+    } catch (error) {
+      console.error("Error uploading file for blockchain submission:", error);
+      // Handle error, maybe show an alert to the user
+    } finally {
+      setIsProcessingUpload(false);
+    }
+  };
+
+  const handleConfirmSign = () => {
+    if (uploadedIpfsCid && uploadedContentHash) {
+      onSubmit(uploadedIpfsCid, uploadedContentHash); // This will update the parent's state and trigger BlockchainSubmission
+    }
+    setShowConfirmation(false); // Hide the confirmation pop-up after confirmation
+  };
+
+  const handleCancelSign = () => {
+    setShowConfirmation(false);
+    setUploadedIpfsCid(null);
+    setUploadedContentHash(null);
+  };
 
   // Calculate summary from results if not provided by backend
   const calculatedSummary = data.results.reduce(
@@ -155,6 +199,7 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
             </div>
           </div>
         </motion.div>
+
       </div>
 
       {/* Detailed Results */}
@@ -258,6 +303,30 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
         )}
       </AnimatePresence>
 
+      {showConfirmation && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="fixed bottom-10 left-1/2 -translate-x-1/2 bg-green-500/10 border border-green-500/20 text-green-800 px-6 py-3 rounded-lg shadow-lg z-40"
+        >
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-6 h-6" />
+            <span className="font-semibold">File Uploaded Successfully!</span>
+          </div>
+          <p className="text-sm mt-1">IPFS CID: {uploadedIpfsCid}</p>
+          <p className="text-sm">Content Hash: {uploadedContentHash}</p>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" onClick={handleCancelSign} className="text-green-800 border-green-800 hover:bg-green-100">
+              Cancel
+            </Button>
+            <Button onClick={handleConfirmSign} className="bg-green-600 hover:bg-green-700 text-white">
+              Confirm Sign
+            </Button>
+          </div>
+        </motion.div>
+      )}
+
       {/* Actions */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -277,24 +346,76 @@ export function AIAnalysisResult({ data, onSubmit }: AIAnalysisResultProps) {
             {isAllReal ? (
               <span className="text-green-500">✓ Ready for secure blockchain submission</span>
             ) : (
-              <span className="text-yellow-500">⚠ Review forged documents before submission</span>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="text-yellow-500 w-5 h-5" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-yellow-500 border-yellow-500 hover:bg-yellow-500/10"
+                  onClick={() => setShowForgedPdfPreview(true)}
+                >
+                  Review Forged Documents
+                </Button>
+              </div>
             )}
           </div>
           <Button
-            onClick={() => setSubmitted(true)}
+            onClick={handleSecureBlockchainSubmission}
             className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white gap-3 min-w-[200px] shadow-lg shadow-primary/20"
             size="lg"
+            disabled={isProcessingUpload}
           >
-            <span>Secure Blockchain Submission</span>
-            <motion.span
-              animate={{ x: [0, 4, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-            >
-              →
-            </motion.span>
+            {isProcessingUpload ? (
+              <span>Uploading...</span>
+            ) : (
+              <>
+                <span>Secure Blockchain Submission</span>
+                <motion.span
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  →
+                </motion.span>
+              </>
+            )}
           </Button>
         </div>
       </motion.div>
+
+      {/* Forged PDF Preview Modal */}
+      <AnimatePresence>
+        {showForgedPdfPreview && forgedPdfUrl && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+            onClick={() => setShowForgedPdfPreview(false)}
+          >
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+              className="bg-card border border-border p-6 rounded-xl shadow-2xl max-w-4xl w-full max-h-[120vh] overflow-y-auto relative"
+              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+            >
+              <Button 
+                variant="ghost" 
+                size="icon"
+                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+                onClick={() => setShowForgedPdfPreview(false)}
+              >
+                ✕
+              </Button>
+              <h2 className="text-3xl font-bold text-foreground mb-6">Forged Document Preview</h2>
+              <div className="h-[70vh] w-full">
+                <iframe src={forgedPdfUrl} width="100%" height="100%" className="border-none" />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </motion.div>
   )
 }

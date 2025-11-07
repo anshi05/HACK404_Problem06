@@ -77,7 +77,7 @@ export function HeroSection() {
         />
       </motion.div>
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 flex flex-col items-center justify-center">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 mt-[-5em] flex flex-col items-center justify-center">
         <div className="flex flex-col items-center justify-center space-y-8">
           {/* Logo */}
           <motion.div
@@ -161,7 +161,7 @@ export function HeroSection() {
               </motion.button>
             </Link>
 
-            <Link href="/auth">
+            <Link href="/dashboard">
               <motion.button
                 whileHover={{ scale: 1.05, boxShadow: "0 0 20px rgba(34, 197, 211, 0.6)" }}
                 whileTap={{ scale: 0.95 }}
@@ -177,7 +177,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1, repeat: Number.POSITIVE_INFINITY, repeatDelay: 2 }}
-            className="text-center text-accent/60 font-mono text-xs mt-12"
+            className="text-center text-accent/60 font-mono text-xs mt-[-0em]"
           >
             [ SCROLL TO EXPLORE ]
           </motion.div>

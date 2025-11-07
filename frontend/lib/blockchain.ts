@@ -72,3 +72,25 @@ export const blockchainService = {
     return `https://mumbai.polygonscan.com/tx/${transactionHash}`
   },
 }
+
+export async function uploadFile(file: File): Promise<{ ipfs_cid: string; content_hash: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetch("http://127.0.0.1:8001/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "Failed to upload file");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw error;
+  }
+}

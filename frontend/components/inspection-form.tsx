@@ -40,12 +40,12 @@ export function InspectionForm({ onAnalyze }: InspectionFormProps) {
           />
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-foreground mb-2">Site ID</label>
           <div className="px-4 py-2 rounded border border-border bg-muted/30 text-foreground font-mono text-sm">
             {formData.siteId}
           </div>
-        </div>
+        </div> */}
 
         <div>
           <label className="block text-sm font-medium text-foreground mb-2">Upload Inspection File</label>

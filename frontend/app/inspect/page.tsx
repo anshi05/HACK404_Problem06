@@ -1,24 +1,59 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { InspectionForm } from "@/components/inspection-form"
 import { AIAnalysisResult } from "@/components/ai-analysis-result"
+import { BlockchainSubmission } from "@/components/blockchain-submission"
 import { motion } from "framer-motion"
 import { analyzePdf } from "@/lib/analysis"
+import { uploadFile } from "@/lib/blockchain"
+
+// Add these two interfaces
+interface AnalysisResult {
+  label: string;
+  confidence: number;
+  prob_fake: number;
+  file: string;
+  image_base64: string;
+  final_label: string;
+}
+
+interface AnalysisSummary {
+  real: number;
+  fake: number;
+  total: number;
+}
+
+interface AnalysisData {
+  status: string;
+  count: number;
+  results: AnalysisResult[];
+  summary: AnalysisSummary;
+  ipfs_cid?: string; 
+  content_hash?: string; 
+}
 
 type Step = "form" | "analysis" | "confirm"
 
 export default function InspectPage() {
   const [step, setStep] = useState<Step>("form")
   const [walletConnected, setWalletConnected] = useState(false)
-  const [analysisData, setAnalysisData] = useState<any>(null)
+  const [analysisData, setAnalysisData] = useState<AnalysisData | null>(null)
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null); // Keep this state
+
+  useEffect(() => {
+    setStep("form");
+    setAnalysisData(null);
+    setUploadedFile(null); // Reset uploaded file
+  }, []);
 
   const handleAnalyze = async (file: File) => {
     try {
+      setUploadedFile(file); // Store the file
       const result = await analyzePdf(file);
-      setAnalysisData(result);
+      setAnalysisData({ ...result }); 
       setStep("analysis");
     } catch (error) {
       console.error("PDF analysis failed:", error);
@@ -26,9 +61,12 @@ export default function InspectPage() {
     }
   }
 
-  const handleSubmitBlockchain = () => {
-    setStep("confirm")
-  }
+  const handleSubmitBlockchain = (ipfsCid: string, contentHash: string) => {
+    if (analysisData) {
+      setAnalysisData(prev => prev ? { ...prev, ipfs_cid: ipfsCid, content_hash: contentHash } : null);
+    }
+    setStep("confirm");
+  };
 
   return (
     <main className="min-h-screen flex flex-col bg-background">
@@ -51,8 +89,11 @@ export default function InspectPage() {
           )}
 
           {step === "form" && <InspectionForm onAnalyze={handleAnalyze} />}
-          {step === "analysis" && analysisData && (
-            <AIAnalysisResult data={analysisData} onSubmit={handleSubmitBlockchain} />
+          {step === "analysis" && analysisData && uploadedFile && (
+            <AIAnalysisResult data={analysisData} file={uploadedFile} onSubmit={handleSubmitBlockchain} />
+          )}
+          {step === "confirm" && analysisData && (
+            <BlockchainSubmission data={analysisData} />
           )}
         </div>
       </div>
