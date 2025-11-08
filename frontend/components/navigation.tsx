@@ -179,6 +179,20 @@ export function Navigation({ isHomePage }: NavigationProps) {
                 Inspect
               </Link>
               <Link
+                href="/issue-certificate"
+                onClick={() => handleLinkClick(["> ACCESSING CERTIFICATE ISSUANCE MODULE..."])}
+                className="text-sm text-foreground/70 hover:text-accent transition-colors font-mono"
+              >
+                Issue Certificate
+              </Link>
+              <Link
+                href="/revoke-certificate"
+                onClick={() => handleLinkClick(["> ACCESSING CERTIFICATE REVOCATION MODULE..."])}
+                className="text-sm text-foreground/70 hover:text-accent transition-colors font-mono"
+              >
+                Revoke Certificate
+              </Link>
+              <Link
                 href={dashboardLink}
                 onClick={() => handleLinkClick(["> AUTHENTICATING USER ROLE...", "> LOADING DASHBOARD DATA..."])}
                 className="text-sm text-foreground/70 hover:text-accent transition-colors font-mono"
